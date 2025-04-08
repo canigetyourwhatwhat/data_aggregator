@@ -88,7 +88,11 @@ func processRow(jobs <-chan string) error {
 		if err != nil || timeStampInt < 0 {
 			slog.Error("Invalid timestamp value", slog.String("timestamp", row[2]))
 		}
-		timestamp := time.Unix(timeStampInt, 0).In(time.FixedZone("CET", 1*60*60))
+		amsterdamLoc, err := time.LoadLocation("Europe/Amsterdam")
+		if err != nil {
+			slog.Error("Invalid location", slog.String("location", "Europe/Amsterdam"))
+		}
+		timestamp := time.Unix(timeStampInt, 0).In(amsterdamLoc)
 
 		// Log all the errors, then skip to the next row
 		if err != nil {
